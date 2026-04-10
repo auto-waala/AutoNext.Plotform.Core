@@ -1,4 +1,5 @@
-﻿using AutoNext.Plotform.Core.API.Models.DTOs;
+﻿using Asp.Versioning;
+using AutoNext.Plotform.Core.API.Models.DTOs;
 using AutoNext.Plotform.Core.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -6,8 +7,8 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace AutoNext.Plotform.Core.API.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
-    [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class LocationsController : ControllerBase
     {
         private readonly ILocationService _locationService;
@@ -76,7 +77,10 @@ namespace AutoNext.Plotform.Core.API.Controllers
                 return BadRequest(ModelState);
 
             var location = await _locationService.CreateLocationAsync(createDto);
-            return CreatedAtAction(nameof(GetById), new { id = location.Id }, location);
+
+            // ✅ Fix 1: Pass 'version' so the versioned route resolves correctly
+            // ✅ Fix 2: Use 'locationid' to match the GetById route parameter name
+            return CreatedAtAction(nameof(GetById), new { version = "1.0", locationid = location.Id }, location);
         }
 
         [HttpDelete("{id:Guid}")]
