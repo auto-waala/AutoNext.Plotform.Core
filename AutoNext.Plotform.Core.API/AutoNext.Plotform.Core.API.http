@@ -1,0 +1,6 @@
+@AutoNext.Plotform.Core.API_HostAddress = http://localhost:5096
+
+GET {{AutoNext.Plotform.Core.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
