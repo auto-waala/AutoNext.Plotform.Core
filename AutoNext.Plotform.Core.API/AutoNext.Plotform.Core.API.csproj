@@ -11,7 +11,6 @@
 		<Folder Include="Models\Enums\" />
 		<Folder Include="Configurations\" />
 		<Folder Include="Validators\" />
-		<Folder Include="Utilitys\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,21 +42,8 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.6.2" />
 	</ItemGroup>
 
+	<!-- ✅ Keep SQL scripts as embedded resources -->
 	<ItemGroup>
 		<EmbeddedResource Include="Scripts\**\*.sql" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Remove="Scripts\Tables\colors.sql" />
-	  <EmbeddedResource Remove="Scripts\Tables\service_types.sql" />
-	  <EmbeddedResource Remove="Scripts\Tables\tax_rates.sql" />
-	  <EmbeddedResource Remove="Scripts\Tables\vehicle_variants.sql" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Include="Scripts\Tables\colors.sql" />
-	  <Compile Include="Scripts\Tables\service_types.sql" />
-	  <Compile Include="Scripts\Tables\tax_rates.sql" />
-	  <Compile Include="Scripts\Tables\vehicle_variants.sql" />
 	</ItemGroup>
 </Project>

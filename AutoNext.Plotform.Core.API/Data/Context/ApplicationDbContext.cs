@@ -1,5 +1,6 @@
 ﻿using AutoNext.Plotform.Core.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace AutoNext.Plotform.Core.API.Data.Context
 {
@@ -15,6 +16,21 @@ namespace AutoNext.Plotform.Core.API.Data.Context
         public DbSet<FuelType> FuelTypes { get; set; }
         public DbSet<Transmission> Transmission { get; set; }
         public DbSet<VehicleType> VehicleTypes { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Color> Colors { get; set; }
+        public DbSet<DocumentType> DocumentTypes { get; set; }
+        public DbSet<Feature> Features { get; set; }
+        public DbSet<InspectionChecklist> InspectionChecks { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<VehicleModel> VehicleModels { get; set; }
+        public DbSet<ServiceType> ServiceTypes { get; set; }
+        public DbSet<ShippingOption> ShippingOptions { get; set; }
+        public DbSet<TaxRate> TaxRates { get; set; }
+        public DbSet<TitleType> TitleTypes { get; set; }
+        public DbSet<VehicleVariant> VehicleVariants { get; set; }
+        public DbSet<VehicleCondition> VehicleConditions { get; set; }
+        public DbSet<WarrantyType> WarrantyTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

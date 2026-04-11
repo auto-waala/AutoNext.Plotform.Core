@@ -36,10 +36,41 @@ builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IVehicleTypeService, VehicleTypeService>();
 builder.Services.AddScoped<IFuelTypeService, FuelTypeService>();
 builder.Services.AddScoped<ITransmissionService, TransmissionService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IColorService, ColorService>();
+builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<IInspectionChecklistService, InspectionChecklistService>();
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
+builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IShippingOptionService, ShippingOptionService>();
+builder.Services.AddScoped<ITaxRateService, TaxRateService>();
+builder.Services.AddScoped<ITitleTypeService, TitleTypeService>();
+builder.Services.AddScoped<IVehicleVariantService, VehicleVariantService>();
+builder.Services.AddScoped<IVehicleConditionService, VehicleConditionService>();
+builder.Services.AddScoped<IWarrantyTypeService, WarrantyTypeService>();
 
-//builder.Services.AddAutoMapper(typeof(Program));
-
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+    cfg.AddProfile<BrandProfile>();
+    cfg.AddProfile<CategoryProfile>();
+    cfg.AddProfile<ColorProfile>();
+    cfg.AddProfile<DocumentTypeProfile>();
+    cfg.AddProfile<FeatureProfile>();
+    cfg.AddProfile<InspectionChecklistProfile>();
+    cfg.AddProfile<PaymentMethodProfile>();
+    cfg.AddProfile<VehicleModelProfile>();
+    cfg.AddProfile<ServiceTypeProfile>();
+    cfg.AddProfile<ShippingOptionProfile>();
+    cfg.AddProfile<TaxRateProfile>();
+    cfg.AddProfile<TitleTypeProfile>();
+    cfg.AddProfile<VehicleVariantProfile>();
+    cfg.AddProfile<VehicleConditionProfile>();
+    cfg.AddProfile<WarrantyTypeProfile>();
+});
 
 var redisConnection = builder.Configuration.GetConnectionString("Redis");
 if (!string.IsNullOrEmpty(redisConnection))
