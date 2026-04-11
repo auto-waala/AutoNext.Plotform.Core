@@ -18,12 +18,24 @@ namespace AutoNext.Plotform.Core.API.Data.UnitOfWork
 
         private IRepository<Location>? _locations;
         private IRepository<CityArea>? _cityAreas;
+        private IRepository<VehicleType>? _vehicleTypes;
+        private IRepository<FuelType>? _fuelTypes;
+        private IRepository<Transmission>? _transmissions;
 
         public IRepository<Location> Locations =>
             _locations ??= new Repository<Location>(_context);
 
         public IRepository<CityArea> CityAreas =>
             _cityAreas ??= new Repository<CityArea>(_context);
+
+        public IRepository<VehicleType> VehicleTypes =>
+          _vehicleTypes ??= new Repository<VehicleType>(_context);
+
+        public IRepository<FuelType> FuelTypes =>
+            _fuelTypes ??= new Repository<FuelType>(_context);
+
+        public IRepository<Transmission> Transmissions =>
+            _transmissions ??= new Repository<Transmission>(_context);
 
         public async Task<int> SaveChangesAsync()
         {

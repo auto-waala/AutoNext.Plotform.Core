@@ -7,6 +7,9 @@ namespace AutoNext.Plotform.Core.API.Data.UnitOfWork
     {
         IRepository<Location> Locations { get; }
         IRepository<CityArea> CityAreas { get; }
+        IRepository<VehicleType> VehicleTypes { get; }
+        IRepository<FuelType> FuelTypes { get; }
+        IRepository<Transmission> Transmissions { get; }
 
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();
