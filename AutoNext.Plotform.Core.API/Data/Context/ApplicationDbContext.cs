@@ -12,6 +12,9 @@ namespace AutoNext.Plotform.Core.API.Data.Context
 
         public DbSet<Location> Locations { get; set; }
         public DbSet<CityArea> CityAreas { get; set; }
+        public DbSet<FuelType> FuelTypes { get; set; }
+        public DbSet<Transmission> Transmission { get; set; }
+        public DbSet<VehicleType> VehicleTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

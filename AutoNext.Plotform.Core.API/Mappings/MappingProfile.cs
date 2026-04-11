@@ -14,6 +14,25 @@ namespace AutoNext.Plotform.Core.API.Mappings
 
             CreateMap<Location, LocationResponseDto>();
             CreateMap<CityArea, CityAreaDto>();
+
+            // Vehicle Type mappings
+            CreateMap<VehicleType, VehicleTypeResponseDto>();
+            CreateMap<VehicleTypeCreateDto, VehicleType>();
+            CreateMap<VehicleTypeUpdateDto, VehicleType>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Fuel Type mappings
+            CreateMap<FuelType, FuelTypeResponseDto>();
+            CreateMap<FuelTypeCreateDto, FuelType>();
+            CreateMap<FuelTypeUpdateDto, FuelType>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            // Transmission mappings
+            CreateMap<Transmission, TransmissionResponseDto>();
+            CreateMap<TransmissionCreateDto, Transmission>();
+            CreateMap<TransmissionUpdateDto, Transmission>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
         }
     }
 }

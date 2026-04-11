@@ -1,5 +1,6 @@
 using AutoNext.Plotform.Core.API.Data.Context;
 using AutoNext.Plotform.Core.API.Data.UnitOfWork;
+using AutoNext.Plotform.Core.API.Mappings;
 using AutoNext.Plotform.Core.API.Middlewares;
 using AutoNext.Plotform.Core.API.Services;
 using DbUp;
@@ -31,10 +32,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         }));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IVehicleTypeService, VehicleTypeService>();
+builder.Services.AddScoped<IFuelTypeService, FuelTypeService>();
+builder.Services.AddScoped<ITransmissionService, TransmissionService>();
 
-builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var redisConnection = builder.Configuration.GetConnectionString("Redis");
 if (!string.IsNullOrEmpty(redisConnection))
