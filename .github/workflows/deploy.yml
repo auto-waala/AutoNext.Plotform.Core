@@ -27,7 +27,7 @@ jobs:
       run: |
         dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/dev -p:EnvironmentName=Development
 
-    - name: Deploy to Dev Environment via FTP (Preserve Logs)
+    - name: Deploy to Dev Environment via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -35,19 +35,13 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/dev/
         server-dir: ${{ secrets.FTP_DEV_PATH }}/
-        # Remove dangerous-clean-slate to prevent deletion of logs folder
-        # This will only overwrite existing files, not delete extra files
-
-    - name: Ensure logs directory exists on Dev
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish/dev/
-        server-dir: ${{ secrets.FTP_DEV_PATH }}/logs/
-        # This creates empty placeholder to ensure logs folder exists
-        # The actual logs folder on server will be preserved
+        port: 21
+        timeout: 120000
+        retry: 5
+        retry-delay: 5000
+        log: verbose
+        # Remove dangerous-clean-slate to preserve logs folder
+        state-name: .ftp-deploy-sync-state-dev.json
 
   deploy-production:
     if: github.event.pull_request.merged == true
@@ -71,7 +65,7 @@ jobs:
       run: |
         dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/prod -p:EnvironmentName=Production
 
-    - name: Deploy to Production Environment via FTP (Preserve Logs)
+    - name: Deploy to Production Environment via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -79,4 +73,10 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/prod/
         server-dir: ${{ secrets.FTP_PROD_PATH }}/
-        # No dangerous-clean-slate - preserves logs and other non-deployed folders
+        port: 21
+        timeout: 120000
+        retry: 5
+        retry-delay: 5000
+        log: verbose
+        # No dangerous-clean-slate - preserves logs folder
+        state-name: .ftp-deploy-sync-state-prod.json
