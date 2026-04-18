@@ -8,9 +8,6 @@
 
 	<ItemGroup>
 		<Folder Include="Data\Migrations\" />
-		<Folder Include="Models\Enums\" />
-		<Folder Include="Configurations\" />
-		<Folder Include="Validators\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,5 +42,19 @@
 	<!-- ✅ Keep SQL scripts as embedded resources -->
 	<ItemGroup>
 		<EmbeddedResource Include="Scripts\**\*.sql" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="Configurations\**" />
+	  <Compile Remove="Models\Enums\**" />
+	  <Compile Remove="Validators\**" />
+	  <Content Remove="Configurations\**" />
+	  <Content Remove="Models\Enums\**" />
+	  <Content Remove="Validators\**" />
+	  <EmbeddedResource Remove="Configurations\**" />
+	  <EmbeddedResource Remove="Models\Enums\**" />
+	  <EmbeddedResource Remove="Validators\**" />
+	  <None Remove="Configurations\**" />
+	  <None Remove="Models\Enums\**" />
+	  <None Remove="Validators\**" />
 	</ItemGroup>
 </Project>
