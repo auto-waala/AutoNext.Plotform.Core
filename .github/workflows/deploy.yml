@@ -1,4 +1,4 @@
-name: Deploy AccessControl API to Dev and Production
+name: Deploy API to Dev and Production
 
 on:
   pull_request:
@@ -23,9 +23,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Publish AccessControl API for Development
+    - name: Publish API for Development
       run: |
-        dotnet publish AutoNext.Platform.AccessControl.API/AutoNext.Platform.AccessControl.API.csproj --configuration Release --output ./publish/dev -p:EnvironmentName=Development
+        dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/dev -p:EnvironmentName=Development
 
     - name: Deploy to Dev Environment via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
@@ -34,13 +34,14 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/dev/
-        server-dir: ${{ secrets.FTP_DEV_PATH_ACCESSCONTROL }}/
+        server-dir: ${{ secrets.FTP_DEV_PATH }}/
         port: 21
         timeout: 120000
         retry: 5
         retry-delay: 5000
         log: verbose
-        state-name: .ftp-deploy-sync-state-dev-accesscontrol.json
+        # Remove dangerous-clean-slate to preserve logs folder
+        state-name: .ftp-deploy-sync-state-dev.json
 
   deploy-production:
     if: github.event.pull_request.merged == true
@@ -60,9 +61,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Publish AccessControl API for Production
+    - name: Publish API for Production
       run: |
-        dotnet publish AutoNext.Platform.AccessControl.API/AutoNext.Platform.AccessControl.API.csproj --configuration Release --output ./publish/prod -p:EnvironmentName=Production
+        dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/prod -p:EnvironmentName=Production
 
     - name: Deploy to Production Environment via FTP
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
@@ -71,10 +72,11 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/prod/
-        server-dir: ${{ secrets.FTP_PROD_PATH_ACCESSCONTROL }}/
+        server-dir: ${{ secrets.FTP_PROD_PATH }}/
         port: 21
         timeout: 120000
         retry: 5
         retry-delay: 5000
         log: verbose
-        state-name: .ftp-deploy-sync-state-prod-accesscontrol.json
+        # No dangerous-clean-slate - preserves logs folder
+        state-name: .ftp-deploy-sync-state-prod.json
