@@ -1,0 +1,161 @@
+name: Deploy API to Dev and Production
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [ master ]
+
+jobs:
+  deploy-dev:
+    if: github.event.pull_request.merged == true
+    runs-on: windows-latest
+    environment: Development
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Create Development appsettings
+      run: |
+        @'
+        {
+          "ConnectionStrings": {
+            "DefaultConnection": "Host=ep-super-feather-adcd67qc-pooler.c-2.us-east-1.aws.neon.tech;Database=AutoNext_Core_Dev;Username=neondb_owner;Password=npg_TIAH0agV7onD;SSL Mode=Require;",
+            "Redis": "localhost:6379"
+          },
+          "Logging": {
+            "LogLevel": {
+              "Default": "Debug",
+              "Microsoft.AspNetCore": "Debug",
+              "Microsoft.EntityFrameworkCore": "Information"
+            }
+          },
+          "Serilog": {
+            "MinimumLevel": {
+              "Default": "Debug",
+              "Override": {
+                "Microsoft": "Information",
+                "System": "Information",
+                "Microsoft.EntityFrameworkCore": "Information"
+              }
+            }
+          },
+          "RabbitMQ": {
+            "HostName": "localhost",
+            "UserName": "guest",
+            "Password": "guest",
+            "Port": 5672,
+            "QueueName": "core_events_dev"
+          },
+          "Cors": {
+            "AllowedOrigins": [
+              "https://autonext-gateway-dev.services.azurewebsites.betalen.in",
+              "https://autonext-backoffice-dev.services.azurewebsites.betalen.in",
+              "http://localhost:5184",
+              "https://localhost:7184",
+              "http://localhost:5096",
+              "https://localhost:7231",
+              "http://localhost:5275",
+              "https://localhost:7056",
+              "http://localhost:4200",
+              "http://localhost:3000"
+            ]
+          }
+        }
+        '@ | Out-File -FilePath AutoNext.Plotform.Core.API/appsettings.Development.json -Encoding UTF8
+
+    - name: Publish API for Development
+      run: |
+        dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/dev -p:EnvironmentName=Development
+
+    - name: Deploy to Dev Environment via FTP
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./publish/dev/
+        server-dir: ${{ secrets.FTP_DEV_PATH }}/
+        dangerous-clean-slate: true
+
+  deploy-production:
+    if: github.event.pull_request.merged == true
+    runs-on: windows-latest
+    environment: Production
+    needs: deploy-dev
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Create Production appsettings
+      run: |
+        @'
+        {
+          "ConnectionStrings": {
+            "DefaultConnection": "Host=ep-super-feather-adcd67qc-pooler.c-2.us-east-1.aws.neon.tech;Database=AutoNext_Core_Prod;Username=neondb_owner;Password=npg_TIAH0agV7onD;SSL Mode=Require;",
+            "Redis": "autonext-redis-prod.redis.cache.windows.net:6380,password=your-redis-prod-key,ssl=True,abortConnect=False"
+          },
+          "Logging": {
+            "LogLevel": {
+              "Default": "Warning",
+              "Microsoft.AspNetCore": "Warning",
+              "Microsoft.EntityFrameworkCore": "Error"
+            }
+          },
+          "Serilog": {
+            "MinimumLevel": {
+              "Default": "Warning",
+              "Override": {
+                "Microsoft": "Error",
+                "System": "Error",
+                "Microsoft.EntityFrameworkCore": "Error"
+              }
+            }
+          },
+          "RabbitMQ": {
+            "HostName": "autonext-rabbitmq-prod.cloudamqp.com",
+            "UserName": "your_prod_user",
+            "Password": "your_prod_password",
+            "Port": 5672,
+            "QueueName": "core_events_prod",
+            "VirtualHost": "autonext_prod"
+          },
+          "Cors": {
+            "AllowedOrigins": [
+              "https://autonext-gateway-prod.services.azurewebsites.betalen.in",
+              "https://autonext-backoffice-prod.services.azurewebsites.betalen.in"
+            ]
+          }
+        }
+        '@ | Out-File -FilePath AutoNext.Plotform.Core.API/appsettings.Production.json -Encoding UTF8
+
+    - name: Publish API for Production
+      run: |
+        dotnet publish AutoNext.Plotform.Core.API/AutoNext.Plotform.Core.API.csproj --configuration Release --output ./publish/prod -p:EnvironmentName=Production
+
+    - name: Deploy to Production Environment via FTP
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./publish/prod/
+        server-dir: ${{ secrets.FTP_PROD_PATH }}/
+        dangerous-clean-slate: true
