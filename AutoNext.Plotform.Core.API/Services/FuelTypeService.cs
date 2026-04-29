@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoNext.Plotform.Core.API.Data.UnitOfWork;
 using AutoNext.Plotform.Core.API.Models.DTOs;
+using AutoNext.Plotform.Core.API.Models.Entities;
 
 namespace AutoNext.Plotform.Core.API.Services
 {
@@ -20,34 +21,142 @@ namespace AutoNext.Plotform.Core.API.Services
             _logger = logger;
         }
 
-        public Task<FuelTypeResponseDto> CreateAsync(FuelTypeCreateDto createDto)
+        public async Task<FuelTypeResponseDto> CreateAsync(FuelTypeCreateDto createDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = _mapper.Map<FuelType>(createDto);
+
+                entity.Id = Guid.NewGuid();
+                entity.IsActive = true;
+                entity.CreatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.FuelTypes.AddAsync(entity);
+                await _unitOfWork.SaveChangesAsync();
+
+                return _mapper.Map<FuelTypeResponseDto>(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating fuel type");
+                throw;
+            }
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _unitOfWork.FuelTypes.GetByIdAsync(id);
+
+                if (entity == null)
+                    return false;
+
+                _unitOfWork.FuelTypes.Remove(entity);
+                await _unitOfWork.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting fuel type with Id: {Id}", id);
+                throw;
+            }
         }
 
-        public Task<IEnumerable<FuelTypeResponseDto>> GetAllAsync(bool onlyActive = false)
+        public async Task<IEnumerable<FuelTypeResponseDto>> GetAllAsync(bool onlyActive = false)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IEnumerable<FuelType> entities;
+
+                if (onlyActive)
+                {
+                    entities = await _unitOfWork.FuelTypes.FindAsync(x => x.IsActive);
+                }
+                else
+                {
+                    entities = await _unitOfWork.FuelTypes.GetAllAsync();
+                }
+
+                return _mapper.Map<IEnumerable<FuelTypeResponseDto>>(entities);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching fuel types");
+                throw;
+            }
         }
 
-        public Task<FuelTypeResponseDto?> GetByIdAsync(Guid id)
+        public async Task<FuelTypeResponseDto?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _unitOfWork.FuelTypes.GetByIdAsync(id);
+
+                if (entity == null)
+                    return null;
+
+                return _mapper.Map<FuelTypeResponseDto>(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching fuel type with Id: {Id}", id);
+                throw;
+            }
         }
 
-        public Task<bool> ToggleActiveAsync(Guid id)
+        public async Task<bool> ToggleActiveAsync(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _unitOfWork.FuelTypes.GetByIdAsync(id);
+
+                if (entity == null)
+                    return false;
+
+                entity.IsActive = !entity.IsActive;
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                _unitOfWork.FuelTypes.Update(entity);
+                await _unitOfWork.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling fuel type status with Id: {Id}", id);
+                throw;
+            }
         }
 
-        public Task<FuelTypeResponseDto?> UpdateAsync(FuelTypeUpdateDto updateDto)
+        public async Task<FuelTypeResponseDto?> UpdateAsync(FuelTypeUpdateDto updateDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var entity = await _unitOfWork.FuelTypes.GetByIdAsync(updateDto.Id);
+
+                if (entity == null)
+                    return null;
+
+                entity.Name = updateDto.Name;
+                entity.Code = updateDto.Code;
+                entity.Description = updateDto.Description;
+                entity.IconUrl = updateDto.IconUrl;
+                entity.SortOrder = updateDto.SortOrder;
+                entity.IsActive = updateDto.IsActive;
+                entity.UpdatedAt = DateTime.UtcNow;
+
+                _unitOfWork.FuelTypes.Update(entity);
+                await _unitOfWork.SaveChangesAsync();
+
+                return _mapper.Map<FuelTypeResponseDto>(entity);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating fuel type with Id: {Id}", updateDto.Id);
+                throw;
+            }
         }
     }
 }
