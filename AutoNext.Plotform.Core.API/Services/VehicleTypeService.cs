@@ -35,8 +35,7 @@ namespace AutoNext.Plotform.Core.API.Services
             else
                 entities = await _unitOfWork.VehicleTypes.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<VehicleTypeResponseDto>>(
-                entities.OrderBy(v => v.SortOrder).ThenBy(v => v.Name));
+            return _mapper.Map<IEnumerable<VehicleTypeResponseDto>>(entities.OrderBy(v => v.Name));
         }
 
         public async Task<VehicleTypeResponseDto> CreateAsync(VehicleTypeCreateDto createDto)
