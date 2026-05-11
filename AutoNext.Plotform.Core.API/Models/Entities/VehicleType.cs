@@ -28,9 +28,6 @@ namespace AutoNext.Plotform.Core.API.Models.Entities
         [MaxLength(500)]
         public string? IconUrl { get; set; }
 
-        [Column("sort_order")]
-        public int SortOrder { get; set; } = 0;
-
         [Column("is_active")]
         public bool IsActive { get; set; } = true;
 
