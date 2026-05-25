@@ -31,7 +31,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         {
             npgsqlOptions.EnableRetryOnFailure(3);
             npgsqlOptions.CommandTimeout(30);
-        }));
+        })
+    .EnableDetailedErrors()
+    .EnableSensitiveDataLogging(builder.Environment.IsDevelopment()));
 
 // Add Redis Cache
 var redisConnection = builder.Configuration.GetConnectionString("Redis");
@@ -90,6 +92,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<VehicleVariantProfile>();
     cfg.AddProfile<VehicleConditionProfile>();
     cfg.AddProfile<WarrantyTypeProfile>();
+    cfg.AddProfile<VehicleTypeProfile>();
 });
 
 builder.Services.AddControllers();

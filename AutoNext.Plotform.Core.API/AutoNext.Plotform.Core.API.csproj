@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Data\Migrations\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
 		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
@@ -45,15 +41,19 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="Configurations\**" />
+	  <Compile Remove="Data\Migrations\**" />
 	  <Compile Remove="Models\Enums\**" />
 	  <Compile Remove="Validators\**" />
 	  <Content Remove="Configurations\**" />
+	  <Content Remove="Data\Migrations\**" />
 	  <Content Remove="Models\Enums\**" />
 	  <Content Remove="Validators\**" />
 	  <EmbeddedResource Remove="Configurations\**" />
+	  <EmbeddedResource Remove="Data\Migrations\**" />
 	  <EmbeddedResource Remove="Models\Enums\**" />
 	  <EmbeddedResource Remove="Validators\**" />
 	  <None Remove="Configurations\**" />
+	  <None Remove="Data\Migrations\**" />
 	  <None Remove="Models\Enums\**" />
 	  <None Remove="Validators\**" />
 	</ItemGroup>

@@ -15,24 +15,28 @@ namespace AutoNext.Plotform.Core.API.Data.Repositories
             _dbSet = context.Set<T>();
         }
 
+        // ─── Base query — AsNoTracking + IgnoreAutoIncludes on every read ─────
+        protected IQueryable<T> ReadQuery => _dbSet.AsNoTracking().IgnoreAutoIncludes();
+
         public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id);
+            // FindAsync bypasses the query pipeline — use FirstOrDefaultAsync instead
+            return await ReadQuery.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == id);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await ReadQuery.ToListAsync();
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.Where(predicate).ToListAsync();
+            return await ReadQuery.Where(predicate).ToListAsync();
         }
 
         public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.SingleOrDefaultAsync(predicate);
+            return await ReadQuery.SingleOrDefaultAsync(predicate);
         }
 
         public async Task AddAsync(T entity)
@@ -62,14 +66,14 @@ namespace AutoNext.Plotform.Core.API.Data.Repositories
 
         public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null)
         {
-            if (predicate == null)
-                return await _dbSet.CountAsync();
-            return await _dbSet.CountAsync(predicate);
+            return predicate == null
+                ? await ReadQuery.CountAsync()
+                : await ReadQuery.CountAsync(predicate);
         }
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.AnyAsync(predicate);
+            return await ReadQuery.AnyAsync(predicate);
         }
     }
 }

@@ -1,15 +1,11 @@
 ﻿using AutoNext.Plotform.Core.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace AutoNext.Plotform.Core.API.Data.Context
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Location> Locations { get; set; }
         public DbSet<CityArea> CityAreas { get; set; }
@@ -36,7 +32,31 @@ namespace AutoNext.Plotform.Core.API.Data.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Composite indexes for faster search
+            // ─── Default schema ───────────────────────────────────────────────
+            modelBuilder.HasDefaultSchema("public");
+
+            // ─── VehicleType ──────────────────────────────────────────────────
+            modelBuilder.Entity<VehicleType>(entity =>
+            {
+                entity.ToTable("vehicle_types", "public");
+
+                entity.HasKey(e => e.Id);
+
+                entity.HasIndex(e => e.Code).IsUnique().HasDatabaseName("vehicle_types_code_key");
+                entity.HasIndex(e => e.Slug).IsUnique().HasDatabaseName("vehicle_types_slug_key");
+                entity.HasIndex(e => e.CategoryId).HasDatabaseName("idx_vehicle_types_category");
+                entity.HasIndex(e => e.IsActive).HasDatabaseName("idx_vehicle_types_is_active");
+
+                entity.Property(e => e.Metadata).HasColumnType("jsonb");
+
+                entity.HasOne(e => e.Category)
+                      .WithMany()
+                      .HasForeignKey(e => e.CategoryId)
+                      .OnDelete(DeleteBehavior.Cascade)
+                      .HasConstraintName("fk_vehicle_types_category");
+            });
+
+            // ─── Location indexes ─────────────────────────────────────────────
             modelBuilder.Entity<Location>()
                 .HasIndex(l => new { l.CountryCode, l.StateCode, l.CityName })
                 .HasDatabaseName("IX_Location_Country_State_City");
@@ -45,12 +65,10 @@ namespace AutoNext.Plotform.Core.API.Data.Context
                 .HasIndex(l => l.Pincode)
                 .HasDatabaseName("IX_Location_Pincode");
 
+            // ─── CityArea indexes ─────────────────────────────────────────────
             modelBuilder.Entity<CityArea>()
                 .HasIndex(ca => ca.Pincode)
                 .HasDatabaseName("IX_CityArea_Pincode");
-
-            // Seed initial India data
-            //SeedIndiaLocations(modelBuilder);
         }
     }
 }
