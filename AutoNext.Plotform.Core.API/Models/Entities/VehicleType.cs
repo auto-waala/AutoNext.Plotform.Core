@@ -10,9 +10,8 @@ namespace AutoNext.Plotform.Core.API.Models.Entities
         [Column("id")]
         public Guid Id { get; set; }
 
-        [Required]
         [Column("category_id")]
-        public Guid CategoryId { get; set; }
+        public Guid? CategoryId { get; set; }
 
         [Required]
         [Column("name")]
@@ -55,5 +54,7 @@ namespace AutoNext.Plotform.Core.API.Models.Entities
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
+        [ForeignKey(nameof(CategoryId))]
+        public virtual Category? Category { get; set; }
     }
 }
