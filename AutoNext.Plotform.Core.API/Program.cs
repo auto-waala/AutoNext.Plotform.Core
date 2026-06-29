@@ -1,4 +1,5 @@
-﻿using AutoNext.Plotform.Core.API.Data.Context;
+﻿using AutoNext.Platform.Core.API.Services;
+using AutoNext.Plotform.Core.API.Data.Context;
 using AutoNext.Plotform.Core.API.Data.UnitOfWork;
 using AutoNext.Plotform.Core.API.Mappings;
 using AutoNext.Plotform.Core.API.Middlewares;
@@ -72,6 +73,7 @@ builder.Services.AddScoped<ITitleTypeService, TitleTypeService>();
 builder.Services.AddScoped<IVehicleVariantService, VehicleVariantService>();
 builder.Services.AddScoped<IVehicleConditionService, VehicleConditionService>();
 builder.Services.AddScoped<IWarrantyTypeService, WarrantyTypeService>();
+builder.Services.AddScoped<IEnquiryService, EnquiryService>();
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(cfg =>
@@ -93,6 +95,7 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddProfile<VehicleConditionProfile>();
     cfg.AddProfile<WarrantyTypeProfile>();
     cfg.AddProfile<VehicleTypeProfile>();
+    cfg.AddProfile<EnquiryProfile>();
 });
 
 builder.Services.AddControllers();

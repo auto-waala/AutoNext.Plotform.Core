@@ -27,7 +27,7 @@ namespace AutoNext.Plotform.Core.API.Data.Context
         public DbSet<VehicleVariant> VehicleVariants { get; set; }
         public DbSet<VehicleCondition> VehicleConditions { get; set; }
         public DbSet<WarrantyType> WarrantyTypes { get; set; }
-
+        public DbSet<Enquiry> Enquiries { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
