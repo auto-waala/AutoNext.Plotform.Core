@@ -48,22 +48,16 @@ namespace AutoNext.Platform.Core.API.Services
 
         public async Task<EnquiryResponseDto> CreateAsync(EnquiryCreateDto createDto)
         {
-            //await _unitOfWork.BeginTransactionAsync();
 
             try
             {
                 var enquiry = _mapper.Map<Enquiry>(createDto);
 
-                enquiry.Id = Guid.NewGuid();
-                enquiry.CreatedAt = DateTime.UtcNow;
-                enquiry.Status = "Pending";
-                enquiry.IsActive = true;
-
                 await _unitOfWork.Enquiries.AddAsync(enquiry);
 
                 await _unitOfWork.SaveChangesAsync();
 
-              //  await _unitOfWork.CommitTransactionAsync();
+                await _unitOfWork.CommitTransactionAsync();
 
                 _logger.LogInformation("Created enquiry: {Name}", enquiry.Name);
 
@@ -71,7 +65,7 @@ namespace AutoNext.Platform.Core.API.Services
             }
             catch (Exception ex)
             {
-              //  await _unitOfWork.RollbackTransactionAsync();
+                await _unitOfWork.RollbackTransactionAsync();
 
                 _logger.LogError(ex, "Error creating enquiry");
 
