@@ -36,6 +36,7 @@ namespace AutoNext.Plotform.Core.API.Data.UnitOfWork
         private IRepository<VehicleVariant>? _vehicleVariants;
         private IRepository<VehicleCondition> _vehicleConditions;
         private IRepository<WarrantyType>? _warrantyTypes;
+        private IRepository<Enquiry>? _enquiry;
 
         public IRepository<Feature> Features =>
             _features ??= new Repository<Feature>(_context);
@@ -95,6 +96,9 @@ namespace AutoNext.Plotform.Core.API.Data.UnitOfWork
 
         public IRepository<WarrantyType> WarrantyTypes =>
             _warrantyTypes ??= new Repository<WarrantyType>(_context);
+
+        public IRepository<Enquiry>Enquiries=>
+            _enquiry ??= new Repository<Enquiry>(_context);
 
         public async Task<int> SaveChangesAsync()
         {

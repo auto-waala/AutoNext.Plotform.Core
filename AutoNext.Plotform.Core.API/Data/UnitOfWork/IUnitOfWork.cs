@@ -25,6 +25,7 @@ namespace AutoNext.Plotform.Core.API.Data.UnitOfWork
         IRepository<VehicleVariant> VehicleVariants { get; }
         IRepository<VehicleCondition> VehicleConditions { get; }
         IRepository<WarrantyType> WarrantyTypes { get; }
+        IRepository<Enquiry> Enquiries {  get; }
 
         Task<int> SaveChangesAsync();
         Task BeginTransactionAsync();
